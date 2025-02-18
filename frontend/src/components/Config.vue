@@ -10,6 +10,7 @@
                 <select v-model="packageType" class="styled-select">
                     <option value="cbz" title="会添加元数据ComicInfo.xml">cbz</option>
                     <option value="zip">zip</option>
+                    <option value="epub">epub</option>
                     <option value="image">图片</option>
                 </select>
             </div>

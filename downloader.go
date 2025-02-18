@@ -55,12 +55,12 @@ var client *http.Client = &http.Client{
 			// "Accept-Encoding": "gzip",
 			"source":     "copyApp",
 			"deviceinfo": "DCO-AL00-DCO-AL00",
-			"webp":       "1",
+			"webp":       "0",
 			// "authorization":   "Token",
 			"platform": "4",
 			"referer":  "com.copymanga.app-2.2.5",
 			"version":  "2.2.5",
-			"region":   "1",
+			"region":   "0",
 		},
 		RoundTripper: http.DefaultTransport,
 	},
@@ -302,7 +302,7 @@ func (d *Downloader) Download(index int) error {
 		sem <- struct{}{}
 		go func(i int, url string) {
 			defer wg.Done()
-			filePath := filepath.Join(folderPath, fmt.Sprintf("%d.jpg", i+1))
+			filePath := filepath.Join(folderPath, fmt.Sprintf("%03d.%s", i+1, strings.Split(url, ".")[len(strings.Split(url, "."))-1]))
 			err := d.DownloadImage(url, filePath)
 			if err != nil {
 				fmt.Println("Error downloading image:", err)
@@ -336,6 +336,23 @@ func (d *Downloader) Download(index int) error {
 		if err != nil {
 			return err
 		}
+		os.RemoveAll(folderPath)
+	} else if d.config.PackageType == "epub" {
+		zipPath := folderPath + ".epub"
+		index = index + 1
+		MetaData := MetaData{
+			Title:       d.bookInfo.Series,
+			Creator:     &d.bookInfo.Author,
+			Description: &d.bookInfo.Description,
+			Subject:     strings.Split(d.bookInfo.Genre, ", "),
+			Index:       &index,
+			Series:      &d.bookInfo.Series,
+		}
+
+		epubBuilder := EpubBuilder{
+			metadata: MetaData,
+		}
+		epubBuilder.BuildComic(zipPath, folderPath)
 		os.RemoveAll(folderPath)
 	}
 	println(folderPath)

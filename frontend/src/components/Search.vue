@@ -43,9 +43,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { Search, GetDownloader, GetDownloaders, GetBookInfo, GetComicChapter, DownloadList } from '../../wailsjs/go/main/DownloaderManager';
+import { Search, GetDownloader, GetBookInfo, GetComicChapter, DownloadList } from '../../wailsjs/go/main/DownloaderManager';
 import { main } from '../../wailsjs/go/models';
 import ChapterList from './ChapterList.vue';
+import { useToast } from 'vue-toastification';
 
 // 数据绑定
 const selectedChapters = ref<number[]>([]);
@@ -56,6 +57,8 @@ const searchPage = ref<number>(1); // 搜索页码
 const keyword = ref<string>(""); // 搜索关键字
 const searchResult = ref<main.Comic[]>([]); // 搜索结果
 const isLoading = ref(false); // 是否正在加载
+
+const toast = useToast();
 
 // 全选
 const selectAll = () => {
@@ -76,7 +79,7 @@ const selectInverse = () => {
 
 // 搜索书籍信息
 const search = async () => {
-    if (isLoading.value) return;
+    if (isLoading.value || !keyword.value) return;
     isLoading.value = true;
     try {
         const res = await Search(keyword.value.trim(), searchPage.value);
@@ -86,6 +89,9 @@ const search = async () => {
         }
     } catch (err) {
         console.error(err);
+        toast.error(err, {
+            timeout: 2000,
+        });
     } finally {
         isLoading.value = false;
     }
@@ -103,6 +109,9 @@ const getChapterList = async (index: number) => {
         chapterList.value = chapterListRes;
     } catch (err) {
         console.error(err);
+        toast.error(err, {
+            timeout: 2000,
+        });
     }
 };
 
@@ -125,8 +134,11 @@ const download = debounce(async () => {
         isDownloading.value = true;
         DownloadList(selectedChapters.value);
         selectedChapters.value = [];
-    } catch (error) {
-        console.error(error);
+    } catch (err) {
+        console.error(err);
+        toast.error(err, {
+            timeout: 2000,
+        });
     } finally {
         isDownloading.value = false;
     }
