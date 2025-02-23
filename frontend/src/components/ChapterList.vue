@@ -1,5 +1,5 @@
 <template>
-    <div class="book-container">
+    <div class="book-container" v-if="chapterList.length">
         <!-- 书籍信息 -->
         <div class="book-info">
             <img :src="cover" alt="Book Cover" class="book-cover" v-if="cover" />

@@ -8,14 +8,14 @@ import (
 )
 
 type ComicInfo struct {
-	Series    string `xml:"Series"`
-	Writer    string `xml:"Writer"`
-	Publisher string `xml:"Publisher"`
-	Genre     string `xml:"Genre"`
-	Summary   string `xml:"Summary"`
-	Title     string `xml:"Title"`
-	Number    string `xml:"Number"`
-	Volume    string `xml:"Volume"`
+	Series string `xml:"Series"`
+	Writer string `xml:"Writer"`
+	// Publisher string `xml:"Publisher"`
+	Genre   string `xml:"Genre"`
+	Summary string `xml:"Summary"`
+	Title   string `xml:"Title"`
+	Number  string `xml:"Number"`
+	// Volume    string `xml:"Volume"`
 	PageCount string `xml:"PageCount"`
 }
 

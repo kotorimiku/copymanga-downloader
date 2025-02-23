@@ -2,29 +2,31 @@
   <div>
     <!-- 配置切换按钮 -->
     <div class="switch-container">
-      <button @click="changePage('search')" class="btn">搜索页面</button>
-      <button @click="changePage('config')" class="btn">配置页面</button>
+      <button @click="changePage(Search)" class="btn">搜索页面</button>
+      <button @click="changePage(Progress)" class="btn">进度</button>
+      <button @click="changePage(Config)" class="btn">配置页面</button>
     </div>
-    <Search v-show="currentPage === 'search'" />
-    <Config v-show="currentPage === 'config'" />
+    <KeepAlive :exclude="['Progress']">
+      <component :is="currentPage" />
+    </KeepAlive>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import Search from './components/Search.vue';
-import Config from './components/Config.vue';
+import { shallowRef } from 'vue';
+import Search from './views/Search.vue';
+import Config from './views/Config.vue';
+import Progress from './views/Progress.vue';
 
-const currentPage = ref<'search' | 'config'>('search'); // 当前页面状态
+const currentPage = shallowRef(Search); // 存储当前组件
 
 // 切换页面
-const changePage = (page: 'search' | 'config') => {
-  currentPage.value = page;
+const changePage = (page: any) => {
+  currentPage.value = page; // 直接切换组件
 };
 </script>
 
 <style scoped>
-
 /* 按钮样式 */
 .btn {
   padding: 8px 16px;

@@ -11,6 +11,7 @@ type Config struct {
 	OutputPath  string  `json:"outputPath"`
 	PackageType string  `json:"packageType"`
 	UserList    []*User `json:"userList"`
+	NamingStyle string  `json:"namingStyle"`
 }
 
 type User struct {
@@ -28,6 +29,7 @@ func Load() *Config {
 			UrlBase:     "mangacopy.com",
 			OutputPath:  "./",
 			PackageType: "cbz",
+			NamingStyle: "title",
 			UserList:    []*User{},
 		}
 	}
@@ -41,6 +43,7 @@ func Load() *Config {
 			OutputPath:  "./",
 			PackageType: "cbz",
 			UserList:    []*User{},
+			NamingStyle: "title",
 		}
 	}
 
@@ -63,7 +66,7 @@ func (c *Config) Save() {
 // SaveConfig  .
 func (c *Config) SaveConfig(config *Config) {
 	config.UserList = ConfigInstance.UserList
-	ConfigInstance = config
+	*ConfigInstance = *config
 	ConfigInstance.Save()
 }
 

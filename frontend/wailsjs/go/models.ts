@@ -135,6 +135,7 @@ export namespace main {
 	    outputPath: string;
 	    packageType: string;
 	    userList: User[];
+	    namingStyle: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
@@ -146,6 +147,7 @@ export namespace main {
 	        this.outputPath = source["outputPath"];
 	        this.packageType = source["packageType"];
 	        this.userList = this.convertValues(source["userList"], User);
+	        this.namingStyle = source["namingStyle"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -167,16 +169,22 @@ export namespace main {
 		}
 	}
 	
-	export class Downloader {
-	    ChapterList: ChapterInfo[];
+	export class DownloaderSingle {
+	    pathWord: string;
+	    chapter?: ChapterInfo;
+	    bookInfo?: BookInfo;
+	    progress: number;
 	
 	    static createFrom(source: any = {}) {
-	        return new Downloader(source);
+	        return new DownloaderSingle(source);
 	    }
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.ChapterList = this.convertValues(source["ChapterList"], ChapterInfo);
+	        this.pathWord = source["pathWord"];
+	        this.chapter = this.convertValues(source["chapter"], ChapterInfo);
+	        this.bookInfo = this.convertValues(source["bookInfo"], BookInfo);
+	        this.progress = source["progress"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -197,6 +205,7 @@ export namespace main {
 		    return a;
 		}
 	}
+	
 
 }
 

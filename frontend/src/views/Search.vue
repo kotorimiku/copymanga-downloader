@@ -35,17 +35,18 @@
             </div>
 
             <div class="chapter-list">
-                <chapterList :chapterList="chapterList" v-model:selectedChapters="selectedChapters" :title="bookInfo?.Series" :cover="bookInfo?.Cover" />
+                <chapterList :chapterList="chapterList" v-model:selectedChapters="selectedChapters"
+                    :title="bookInfo?.Series" :cover="bookInfo?.Cover" />
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { Search, GetDownloader, GetBookInfo, GetComicChapter, DownloadList } from '../../wailsjs/go/main/DownloaderManager';
 import { main } from '../../wailsjs/go/models';
-import ChapterList from './ChapterList.vue';
+import ChapterList from '../components/ChapterList.vue';
 import { useToast } from 'vue-toastification';
 
 // 数据绑定
@@ -91,6 +92,7 @@ const search = async () => {
         console.error(err);
         toast.error(err, {
             timeout: 2000,
+            closeOnClick: false,
         });
     } finally {
         isLoading.value = false;
@@ -101,23 +103,26 @@ const search = async () => {
 const getChapterList = async (index: number) => {
     try {
         await GetDownloader(searchResult.value[index].path_word!);
-        const bookInfoRes = await GetBookInfo();
-        bookInfo.value = bookInfoRes;
+        GetBookInfo().then((bookInfoRes) => {
+            bookInfo.value = bookInfoRes;
+        });
 
-        const chapterListRes = await GetComicChapter();
-        selectedChapters.value = [];
-        chapterList.value = chapterListRes;
+        GetComicChapter().then((chapterListRes) => {
+            selectedChapters.value = [];
+            chapterList.value = chapterListRes;
+        });
     } catch (err) {
         console.error(err);
         toast.error(err, {
             timeout: 2000,
+            closeOnClick: false,
         });
     }
 };
 
 function debounce(func: Function, delay: number) {
     let timeoutId: any;
-    return  (...args: any) => {
+    return (...args: any) => {
         clearTimeout(timeoutId); // 清除之前的定时器
         timeoutId = setTimeout(() => {
             func.apply(args); // 延迟执行
@@ -138,6 +143,7 @@ const download = debounce(async () => {
         console.error(err);
         toast.error(err, {
             timeout: 2000,
+            closeOnClick: false,
         });
     } finally {
         isDownloading.value = false;
@@ -169,11 +175,13 @@ const nextPage = () => {
 }
 
 /* 输入框与按钮组布局 */
-.input-group, .action-buttons {
+.input-group,
+.action-buttons {
     display: flex;
     gap: 15px;
     margin-bottom: 20px;
-    flex-wrap: wrap; /* 使得在小屏幕下换行 */
+    flex-wrap: wrap;
+    /* 使得在小屏幕下换行 */
 }
 
 .action-buttons {
@@ -182,7 +190,8 @@ const nextPage = () => {
     align-items: center;
 }
 
-.pagination, .button-group {
+.pagination,
+.button-group {
     display: flex;
     gap: 15px;
     align-items: center;
@@ -221,7 +230,8 @@ const nextPage = () => {
     transform: translateY(-2px);
 }
 
-.btn:disabled, .disabled {
+.btn:disabled,
+.disabled {
     background-color: #e0e0e0;
     cursor: not-allowed;
 }
@@ -241,7 +251,8 @@ const nextPage = () => {
 .comic-list {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); /* 自适应列数 */
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    /* 自适应列数 */
     height: 100%;
     gap: 15px;
     margin: 0;
@@ -281,12 +292,15 @@ const nextPage = () => {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    overflow-y: auto; /* 添加滚动条 */
+    overflow-y: auto;
+    /* 添加滚动条 */
 }
 
 /* 响应式布局 */
 @media (max-width: 768px) {
-    .input-group, .action-buttons {
+
+    .input-group,
+    .action-buttons {
         flex-direction: column;
         gap: 10px;
     }
@@ -296,7 +310,8 @@ const nextPage = () => {
         align-items: flex-start;
     }
 
-    .pagination, .button-group {
+    .pagination,
+    .button-group {
         width: 100%;
         justify-content: space-between;
     }
